@@ -589,7 +589,7 @@ HRESULT CH264NaluParser::ParseCodedSlice(){
 	/*if(memory_management_control_operation == 5){
 	  prevFrameNumOffset = 0;
 	  tempPicOrderCnt = PicOrderCnt(CurrPic);
-	  TopFieldOrderCnt = TopFieldOrderCnt – tempPicOrderCnt
+	  TopFieldOrderCnt = TopFieldOrderCnt ?tempPicOrderCnt
 	}
 	else
 	*/
