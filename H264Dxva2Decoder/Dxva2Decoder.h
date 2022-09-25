@@ -7,6 +7,7 @@
 // todo : check max NUM_DXVA2_SURFACE/h264/dxva2 capabilities
 // todo : some files just need 4 NUM_DXVA2_SURFACE, others need 32, and perhaps others 64 (check how to known)
 // the NUM_DXVA2_SURFACE seems to be determined by the number of times where a frame stays in the short ref buffer
+#include "DXDecoder.h"
 #define NUM_DXVA2_SURFACE 64
 
 const DWORD D3DFMT_NV12 = MAKEFOURCC('N', 'V', '1', '2');
@@ -15,7 +16,7 @@ const DWORD D3DFMT_NV12 = MAKEFOURCC('N', 'V', '1', '2');
 #define D3DALIGN(x, a) (((x)+(a)-1)&~((a)-1))
 #endif
 
-class CDxva2Decoder{
+class CDxva2Decoder : public DXDecoder {
 
 public:
 

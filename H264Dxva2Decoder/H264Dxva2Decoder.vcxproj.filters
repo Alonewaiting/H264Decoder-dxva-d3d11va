@@ -93,6 +93,12 @@
     <ClInclude Include="Dxva2WindowsForm.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="CD3D11vaDecoder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="DXDecoder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitStream.cpp">
@@ -132,6 +138,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Dxva2WindowsForm.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11vaDecoder.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

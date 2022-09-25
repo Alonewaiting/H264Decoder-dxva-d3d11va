@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="CallbackMessage.h" />
+    <ClInclude Include="CD3D11vaDecoder.h" />
     <ClInclude Include="Common\MFBuffer.h" />
     <ClInclude Include="Common\MFCriticSection.h" />
     <ClInclude Include="Common\MFLightBuffer.h" />
@@ -29,6 +30,7 @@
     <ClInclude Include="Common\MFReadParam.h" />
     <ClInclude Include="Common\MFTExternTrace.h" />
     <ClInclude Include="Common\MFTrace.h" />
+    <ClInclude Include="DXDecoder.h" />
     <ClInclude Include="Dxva2Decoder.h" />
     <ClInclude Include="Dxva2Definition.h" />
     <ClInclude Include="Dxva2Renderer.h" />
@@ -47,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitStream.cpp" />
+    <ClCompile Include="CD3D11vaDecoder.cpp" />
     <ClCompile Include="Dxva2Decoder.cpp" />
     <ClCompile Include="Dxva2Renderer.cpp" />
     <ClCompile Include="Dxva2WindowsForm.cpp" />
