@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include <map>
 #include <mutex>
-#define MAX_SURFACE_SIZE 20
+#define MAX_SURFACE_SIZE 64
 class CD3D11vaDecoder : public DXDecoder {
 
 

@@ -533,8 +533,8 @@ HRESULT CPlayer::ProcessDecoding(){
 					IF_FAILED_THROW(m_cDxva2Decoder.DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 					IF_FAILED_THROW(m_cD3D11Decoder->DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 					SAMPLE_PRESENTATION SamplePresentation = {0};
-
-					if(m_cDxva2Decoder.CheckFrame(SamplePresentation) || m_cD3D11Decoder->CheckFrame(SamplePresentation)){
+					m_cD3D11Decoder->CheckFrame(SamplePresentation);
+					if(m_cDxva2Decoder.CheckFrame(SamplePresentation)){
 
 						AutoLock lock(m_CriticSection);
 						m_dqPresentation.push_front(SamplePresentation);
@@ -557,8 +557,8 @@ HRESULT CPlayer::ProcessDecoding(){
 					IF_FAILED_THROW(m_cD3D11Decoder->DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 
 					SAMPLE_PRESENTATION SamplePresentation = {0};
-
-					if(m_cDxva2Decoder.CheckFrame(SamplePresentation) || m_cD3D11Decoder->CheckFrame(SamplePresentation)){
+					m_cD3D11Decoder->CheckFrame(SamplePresentation);
+					if(m_cDxva2Decoder.CheckFrame(SamplePresentation) ){
 
 						AutoLock lock(m_CriticSection);
 						m_dqPresentation.push_front(SamplePresentation);

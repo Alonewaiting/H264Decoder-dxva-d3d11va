@@ -8,7 +8,7 @@
 #endif
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
-#define  MAX_SURFACE_COUTN 20
+#define  MAX_SURFACE_COUTN 64
 /* define all the GUIDs used directly here,
  to avoid problems with inconsistent dxva2api.h versions in mingw-w64 and different MSVC version */
 DEFINE_GUID(ff_DXVA2_ModeMPEG2_VLD, 0xee27417f, 0x5e28, 0x4e65, 0xbe, 0xea, 0x1d, 0x26, 0xb5, 0x08, 0xad, 0xc9);
@@ -88,7 +88,7 @@ HRESULT CD3D11vaDecoder::DecodeFrame(CMFBuffer& cMFNaluBuffer, const PICTURE_INF
     unsigned buffer_count = 0;
     assert(m_videoDecode != nullptr);
 
-    DWORD dwCurPictureId = 0;
+    DWORD dwCurPictureId = GetFreeSurfaceIndex();
     IF_FAILED_RETURN(dwCurPictureId == (DWORD)-1 ? E_FAIL : S_OK);
 
     try {
