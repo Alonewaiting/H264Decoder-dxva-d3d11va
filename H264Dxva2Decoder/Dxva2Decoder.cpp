@@ -54,7 +54,7 @@ HRESULT CDxva2Decoder::InitVideoDecoder(IDirect3DDeviceManager9* pDirect3DDevice
 			if(pConfigs[uiIndex].ConfigBitstreamRaw == 2){
 
 				// if ConfigBitstreamRaw == 2, we can use DXVA_Slice_H264_Short
-				m_pConfigs = pConfigs;
+				m_pConfigs = &pConfigs[uiIndex];
 				break;
 			}
 		}

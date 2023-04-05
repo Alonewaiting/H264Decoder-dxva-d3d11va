@@ -76,7 +76,7 @@ private:
     deque<PICTURE_PRESENTATION> m_dqPicturePresentation;
 	BYTE m_btNalRefIdc;
 	INT m_iPrevTopFieldOrderCount;
-
+	DXVA2_VideoDesc m_videoDesc;
 
     DXVA2_SURFACE_INDEX g_Dxva2SurfaceIndexV2[MAX_SURFACE_SIZE];
 	D3D11_VIDEO_DECODER_BUFFER_DESC m_BufferDesc[4];

@@ -27,7 +27,19 @@ DEFINE_GUID(ff_DXVA2_NoEncrypt, 0x1b81beD0, 0xa0c7, 0x11d3, 0xb9, 0x84, 0x00, 0x
 DEFINE_GUID(ff_GUID_NULL, 0x00000000, 0x0000, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
 DEFINE_GUID(ff_IID_IDirectXVideoDecoderService, 0xfc51a551, 0xd5e7, 0x11d9, 0xaf, 0x55, 0x00, 0x05, 0x4e, 0x43, 0xff, 0x02);
 
+#define D3DALIGN(x, a) (((x)+(a)-1)&~((a)-1))
+
+
 #define AV_CODEC_ID_H264 0
+#include <fstream>
+static std::string filePath = "D:/test/test.nv12";
+static void saveFile(const char* data, const size_t& size) {
+    std::fstream f;
+    f.open(filePath,std::ios::out | std::ios::app);
+    f.write(data,size);
+    f.close();
+}
+
 CD3D11vaDecoder::CD3D11vaDecoder()
 {
     
@@ -151,6 +163,28 @@ HRESULT CD3D11vaDecoder::DecodeFrame(CMFBuffer& cMFNaluBuffer, const PICTURE_INF
     catch (HRESULT) {
         
     }
+    //save NV12 Data
+    if (true) {
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
+        D3D11_TEXTURE2D_DESC desc2;
+        m_texturePool->GetDesc(&desc2);
+
+        D3D11_TEXTURE2D_DESC texDesc{};
+        texDesc.Width = m_videoDesc.SampleWidth;
+        texDesc.Height = m_videoDesc.SampleHeight;
+        texDesc.MipLevels = 1;
+        texDesc.Format = DXGI_FORMAT_NV12;
+        texDesc.SampleDesc = desc2.SampleDesc;
+        texDesc.ArraySize = 1;
+        texDesc.Usage = D3D11_USAGE_STAGING;
+        texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        m_d3d11Device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf());
+        m_deviceContext->CopySubresourceRegion(texture.Get(), 0, 0, 0, 0, m_texturePool.Get(), dwCurPictureId, NULL);
+        D3D11_MAPPED_SUBRESOURCE map;
+        m_deviceContext->Map(texture.Get(), 0, D3D11_MAP_READ, 0, &map);
+        saveFile((char*)map.pData, map.DepthPitch);
+        m_deviceContext->Unmap(texture.Get(), 0);
+    } 
     return hr;
 
 }
@@ -184,11 +218,11 @@ void CD3D11vaDecoder::InitPictureParams(const DWORD dwIndex, const PICTURE_INFO&
     m_H264PictureParams.CurrPic.AssociatedFlag = Picture.pps.bottom_field_pic_order_in_frame_present_flag;
     m_H264PictureParams.num_ref_frames = (UCHAR)Picture.sps.num_ref_frames;
 
-    //m_H264PictureParams.wBitFields = 0;
-    //m_H264PictureParams.field_pic_flag = 0;
-    //m_H264PictureParams.MbaffFrameFlag = 0;
+    m_H264PictureParams.wBitFields = 0;
+    m_H264PictureParams.field_pic_flag = 0;
+    m_H264PictureParams.MbaffFrameFlag = 0;
     m_H264PictureParams.residual_colour_transform_flag = Picture.sps.separate_colour_plane_flag;
-    //m_H264PictureParams.sp_for_switch_flag = 0;
+    m_H264PictureParams.sp_for_switch_flag = 0;
     m_H264PictureParams.chroma_format_idc = Picture.sps.chroma_format_idc;
     m_H264PictureParams.RefPicFlag = m_btNalRefIdc != 0;
     m_H264PictureParams.constrained_intra_pred_flag = Picture.pps.constrained_intra_pred_flag;
@@ -233,21 +267,21 @@ void CD3D11vaDecoder::InitPictureParams(const DWORD dwIndex, const PICTURE_INFO&
     m_H264PictureParams.pic_init_qp_minus26 = (CHAR)Picture.pps.pic_init_qp_minus26;
     m_H264PictureParams.num_ref_idx_l0_active_minus1 = (UCHAR)Picture.pps.num_ref_idx_l0_active_minus1;
     m_H264PictureParams.num_ref_idx_l1_active_minus1 = (UCHAR)Picture.pps.num_ref_idx_l1_active_minus1;
-    //m_H264PictureParams.Reserved8BitsA = 0;
-    //m_H264PictureParams.NonExistingFrameFlags = 0;
+    m_H264PictureParams.Reserved8BitsA = 0;
+    m_H264PictureParams.NonExistingFrameFlags = 0;
     m_H264PictureParams.frame_num = Picture.slice.frame_num;
     m_H264PictureParams.log2_max_frame_num_minus4 = (UCHAR)Picture.sps.log2_max_frame_num_minus4;
     m_H264PictureParams.pic_order_cnt_type = (UCHAR)Picture.sps.pic_order_cnt_type;
     m_H264PictureParams.log2_max_pic_order_cnt_lsb_minus4 = (UCHAR)Picture.sps.log2_max_pic_order_cnt_lsb_minus4;
-    //m_H264PictureParams.delta_pic_order_always_zero_flag = 0;
+    m_H264PictureParams.delta_pic_order_always_zero_flag = 0;
     m_H264PictureParams.direct_8x8_inference_flag = (UCHAR)Picture.sps.direct_8x8_inference_flag;
     m_H264PictureParams.entropy_coding_mode_flag = (UCHAR)Picture.pps.entropy_coding_mode_flag;
     m_H264PictureParams.pic_order_present_flag = (UCHAR)Picture.pps.bottom_field_pic_order_in_frame_present_flag;
     m_H264PictureParams.num_slice_groups_minus1 = (UCHAR)Picture.pps.num_slice_groups_minus1;
-    //m_H264PictureParams.slice_group_map_type = 0;
+    m_H264PictureParams.slice_group_map_type = 0;
     m_H264PictureParams.deblocking_filter_control_present_flag = (UCHAR)Picture.pps.deblocking_filter_control_present_flag;
     m_H264PictureParams.redundant_pic_cnt_present_flag = (UCHAR)Picture.pps.redundant_pic_cnt_present_flag;
-    //m_H264PictureParams.Reserved8BitsB = 0;
+    m_H264PictureParams.Reserved8BitsB = 0;
     m_H264PictureParams.slice_group_change_rate_minus1 = (USHORT)Picture.pps.num_slice_groups_minus1;
 
     if (m_dwStatusReportFeedbackNumber == ULONG_MAX) {
@@ -546,9 +580,9 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     }
     HRESULT hr = S_OK;
     D3D11_TEXTURE2D_DESC texDesc ={};
-
-    texDesc.Width = pDxva2Desc->SampleWidth;
-    texDesc.Height = pDxva2Desc->SampleHeight;
+    m_videoDesc = *pDxva2Desc;
+    texDesc.Width = D3DALIGN(pDxva2Desc->SampleWidth,16);
+    texDesc.Height = D3DALIGN(pDxva2Desc->SampleHeight,16);
     texDesc.MipLevels = 1;
     texDesc.Format = DXGI_FORMAT_NV12;
     texDesc.SampleDesc.Count = 1;
@@ -562,7 +596,7 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     if (!m_texturePool) {
         return E_NOTIMPL;
     }
-    m_guid = ff_DXVA2_ModeH264_E;
+    m_guid = DXVA2_ModeH264_E;
     D3D11_VIDEO_DECODER_OUTPUT_VIEW_DESC viewDesc;
     ZeroMemory(&viewDesc, sizeof(viewDesc));
     viewDesc.DecodeProfile = m_guid;
@@ -579,8 +613,8 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     D3D11_VIDEO_DECODER_DESC decoderDesc;
     ZeroMemory(&decoderDesc, sizeof(decoderDesc));
     decoderDesc.Guid = m_guid;
-    decoderDesc.SampleWidth = pDxva2Desc->SampleWidth;
-    decoderDesc.SampleHeight = pDxva2Desc->SampleHeight;
+    decoderDesc.SampleWidth = D3DALIGN(pDxva2Desc->SampleWidth, 16);
+    decoderDesc.SampleHeight = D3DALIGN(pDxva2Desc->SampleHeight, 16);
     decoderDesc.OutputFormat = DXGI_FORMAT_NV12;
     UINT cfg_count;
 
