@@ -477,9 +477,11 @@ void CWindowsForm::OnChooseFile(){
 	ofn.Flags = OFN_HIDEREADONLY;
 
 	if(GetOpenFileName(&ofn)){
-
-		if(FAILED(OnOpenFile(wszBuffer)))
+		auto hr = OnOpenFile(wszBuffer);
+		if(FAILED(hr)){
 			MessageBox(m_hWnd, L"Failed to load video file", L"Error", MB_OK);
+		}
+			
 	}
 }
 
