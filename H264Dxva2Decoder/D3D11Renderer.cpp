@@ -239,13 +239,10 @@ void D3D11Renderer::Reset()
     memset(&m_LastPresentation, 0, sizeof(m_LastPresentation));
 }
 
-HRESULT D3D11Renderer::RenderFrame(IDirect3DSurface9**, const SAMPLE_PRESENTATION&)
-{
-    return {};
-}
 
-HRESULT D3D11Renderer::RenderFrame(ID3D11Texture2D* texture, const SAMPLE_PRESENTATION& info)
+HRESULT D3D11Renderer::RenderFrame(void* itexture, const SAMPLE_PRESENTATION& info)
 {
+    ID3D11Texture2D* texture = static_cast<ID3D11Texture2D*>(itexture);
     Microsoft::WRL::ComPtr<ID3D11Device> device;
     D3D11_TEXTURE2D_DESC sourceDesc;
     texture->GetDevice(device.ReleaseAndGetAddressOf());
@@ -326,7 +323,7 @@ HRESULT D3D11Renderer::RenderLastFrame()
     return hr;
 }
 
-HRESULT D3D11Renderer::RenderLastFramePresentation(IDirect3DSurface9**)
+HRESULT D3D11Renderer::RenderLastFramePresentation(void*)
 {
     return {};
 }
@@ -346,7 +343,7 @@ HRESULT D3D11Renderer::SetFilter(const UINT, const INT)
     return {};
 }
 
-IDirect3DDeviceManager9* D3D11Renderer::GetDeviceManager9()
+void* D3D11Renderer::GetDevice()
 {
     return {};
 }

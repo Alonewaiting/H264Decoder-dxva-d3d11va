@@ -24,6 +24,11 @@ BEGIN
         MENUITEM "Pause",           ID_CONTROL_PAUSE
         MENUITEM "Stop",            ID_CONTROL_STOP
     END
+    POPUP "Type"
+    BEGIN
+        MENUITEM "D3D11", ID_D3D11_TYPE_SETTINGS
+        MENUITEM "D3D9", ID_D3D9_TYPE_SETTINGS
+    END
     POPUP "Dxva2"
     BEGIN
         MENUITEM "Settings",        ID_DXVA2PARAMETERS_SETTINGS

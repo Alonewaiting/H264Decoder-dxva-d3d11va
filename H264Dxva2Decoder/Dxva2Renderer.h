@@ -15,18 +15,17 @@ public:
 	HRESULT InitDXVA2(const HWND, const UINT, const UINT, const UINT, const UINT, DXVA2_VideoDesc&, const MFTIME) override;
 	void OnRelease()override;
 	void Reset()override;
-	HRESULT RenderFrame(IDirect3DSurface9**, const SAMPLE_PRESENTATION&)override;
+	HRESULT RenderFrame(void*, const SAMPLE_PRESENTATION&)override;
 	HRESULT RenderBlackFrame()override;
 	HRESULT RenderLastFrame()override;
-	HRESULT RenderLastFramePresentation(IDirect3DSurface9**)override;
+	HRESULT RenderLastFramePresentation(void*)override;
 	BOOL GetDxva2Settings(DXVAHD_FILTER_RANGE_DATA_EX*, BOOL&)override;
 	HRESULT ResetDxva2Settings()override;
 	HRESULT SetFilter(const UINT, const INT)override;
 
 	// Inline
-	IDirect3DDeviceManager9* GetDeviceManager9()override { return m_pDirect3DDeviceManager9; }
+	void* GetDevice()override { return m_pDirect3DDeviceManager9; }
 	const BOOL IsInitialized() const override { return m_pDXVAVP != NULL; }
-	HRESULT RenderFrame(ID3D11Texture2D*, const SAMPLE_PRESENTATION&) override {return S_OK;}
 private:
 
 	// DirectX9Ex

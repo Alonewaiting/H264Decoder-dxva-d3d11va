@@ -41,7 +41,7 @@ private:
 	PLAYER_STATE m_bPlayerState;
 	BOOL m_bWasPlaying;
 	CDxva2WindowsForm m_cDxva2WindowsForm;
-
+	
 	// WindowsForm.cpp
 	HRESULT InitPlayer();
 	void OnExit();
@@ -63,6 +63,8 @@ private:
 	void OnDxva2Settings(const UINT, const INT);
 	void OnResetDxva2Settings();
 	void UpdateDxva2Settings();
+	void EnableD3D11();
+	void EnableD3D9();
 };
 
 #endif

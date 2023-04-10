@@ -24,8 +24,9 @@ CDxva2Decoder::CDxva2Decoder(){
 	memset(g_Dxva2SurfaceIndexV2, 0, sizeof(g_Dxva2SurfaceIndexV2));
 }
 
-HRESULT CDxva2Decoder::InitVideoDecoder(IDirect3DDeviceManager9* pDirect3DDeviceManager9, const DXVA2_VideoDesc* pDxva2Desc, const SPS_DATA& sps){
+HRESULT CDxva2Decoder::InitVideoDecoder(void* Direct3DDeviceManager9, const DXVA2_VideoDesc* pDxva2Desc, const SPS_DATA& sps){
 
+	IDirect3DDeviceManager9* pDirect3DDeviceManager9 = static_cast<IDirect3DDeviceManager9*>(Direct3DDeviceManager9);
 	HRESULT hr;
 	IDirectXVideoDecoderService* pDecoderService = NULL;
 	DXVA2_ConfigPictureDecode* pConfigs = NULL;
@@ -54,7 +55,7 @@ HRESULT CDxva2Decoder::InitVideoDecoder(IDirect3DDeviceManager9* pDirect3DDevice
 			if(pConfigs[uiIndex].ConfigBitstreamRaw == 2){
 
 				// if ConfigBitstreamRaw == 2, we can use DXVA_Slice_H264_Short
-				m_pConfigs = &pConfigs[uiIndex];
+				m_pConfigs = pConfigs;
 				break;
 			}
 		}

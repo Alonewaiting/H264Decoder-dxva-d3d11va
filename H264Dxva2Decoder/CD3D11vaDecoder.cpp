@@ -49,7 +49,7 @@ CD3D11vaDecoder::~CD3D11vaDecoder()
 {
 }
 
-HRESULT CD3D11vaDecoder::InitVideoDecoder(IDirect3DDeviceManager9* pDirect3DDeviceManager9, const DXVA2_VideoDesc* pDxva2Desc, const SPS_DATA& sps)
+HRESULT CD3D11vaDecoder::InitVideoDecoder(void* pDirect3DDeviceManager9, const DXVA2_VideoDesc* pDxva2Desc, const SPS_DATA& sps)
 {
     initDevice();
     initVideoDecoder(pDxva2Desc);
@@ -516,11 +516,6 @@ void CD3D11vaDecoder::ResetAllSurfaceIndex() {
 
     std::unique_lock<std::mutex> _(m_lock);
     memset(g_Dxva2SurfaceIndexV2, 0, sizeof(g_Dxva2SurfaceIndexV2));
-}
-
-IDirect3DSurface9** CD3D11vaDecoder::GetDirect3DSurface9()
-{
-    return nullptr;
 }
 
 const BOOL CD3D11vaDecoder::IsInitialized() const

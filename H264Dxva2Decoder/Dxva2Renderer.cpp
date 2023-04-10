@@ -115,8 +115,8 @@ void CDxva2Renderer::Reset(){
 	memset(&m_LastPresentation, 0, sizeof(m_LastPresentation));
 }
 
-HRESULT CDxva2Renderer::RenderFrame(IDirect3DSurface9** pSurface9, const SAMPLE_PRESENTATION& SamplePresentation){
-
+HRESULT CDxva2Renderer::RenderFrame(void* surface9, const SAMPLE_PRESENTATION& SamplePresentation){
+	IDirect3DSurface9** pSurface9 = static_cast<IDirect3DSurface9**>(surface9);
 	HRESULT hr = S_OK;
 	IDirect3DSurface9* pRT = NULL;
 	DXVAHD_STREAM_DATA stream_data;
@@ -200,8 +200,8 @@ HRESULT CDxva2Renderer::RenderLastFrame(){
 	return hr;
 }
 
-HRESULT CDxva2Renderer::RenderLastFramePresentation(IDirect3DSurface9** pSurface9){
-
+HRESULT CDxva2Renderer::RenderLastFramePresentation(void* surface9){
+	IDirect3DSurface9** pSurface9 = static_cast<IDirect3DSurface9**>(surface9);
 	HRESULT hr = S_OK;
 	IDirect3DSurface9* pRT = NULL;
 	DXVAHD_STREAM_DATA stream_data;

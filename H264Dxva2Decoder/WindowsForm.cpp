@@ -299,7 +299,12 @@ BOOL CWindowsForm::OnCommand(const DWORD dwCmd){
 			m_cDxva2WindowsForm.Open(m_hInst, m_hWnd);
 			UpdateDxva2Settings();
 			break;
-
+		case ID_D3D11_TYPE_SETTINGS:
+			EnableD3D11();
+			break;
+		case ID_D3D9_TYPE_SETTINGS:
+			EnableD3D9();
+			break;
 		default:
 			bNoCmd = TRUE;
 	}
@@ -514,4 +519,18 @@ void CWindowsForm::UpdateDxva2Settings(){
 
 	if(m_pPlayer->GetDxva2Settings(Filters, bUseBT709))
 		m_cDxva2WindowsForm.UpdateDxva2Settings(Filters, bUseBT709);
+}
+
+void CWindowsForm::EnableD3D11()
+{
+	if (m_pPlayer) {
+		m_pPlayer->CreateDXDecoder(TRUE);
+	}
+}
+
+void CWindowsForm::EnableD3D9()
+{
+    if (m_pPlayer) {
+        m_pPlayer->CreateDXDecoder(FALSE);
+    }
 }

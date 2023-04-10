@@ -11,7 +11,7 @@ public:
 
 	virtual ~DXDecoder(){  }
 
-	virtual HRESULT InitVideoDecoder(IDirect3DDeviceManager9*, const DXVA2_VideoDesc*, const SPS_DATA&) = 0;
+	virtual HRESULT InitVideoDecoder(void*, const DXVA2_VideoDesc*, const SPS_DATA&) = 0;
 	virtual void OnRelease() = 0;
 	virtual void Reset() =0 ;
 	virtual HRESULT DecodeFrame(CMFBuffer&, const PICTURE_INFO&, const LONGLONG&, const int) = 0;
@@ -23,8 +23,9 @@ public:
 	virtual void ClearPresentation() = 0;
 	virtual DWORD PictureToDisplayCount() const =0;
 	virtual void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc) = 0;
-	virtual IDirect3DSurface9** GetDirect3DSurface9() = 0;
-	virtual ID3D11Texture2D* GetD3D11Texture() = 0;
+    //virtual IDirect3DSurface9** GetDirect3DSurface9() = 0;
+    //virtual ID3D11Texture2D* GetD3D11Texture() = 0;
+	virtual void* GetSurface() = 0;
 	virtual const BOOL IsInitialized() const = 0;
 
 };

@@ -10,15 +10,14 @@ public:
     virtual HRESULT InitDXVA2(const HWND, const UINT, const UINT, const UINT, const UINT, DXVA2_VideoDesc&, const MFTIME) override;
     virtual void OnRelease() override;
     virtual void Reset() override;
-    virtual HRESULT RenderFrame(IDirect3DSurface9**, const SAMPLE_PRESENTATION&) override;
-    HRESULT RenderFrame(ID3D11Texture2D*, const SAMPLE_PRESENTATION&) override;
+    HRESULT RenderFrame(void*, const SAMPLE_PRESENTATION&) override;
     virtual HRESULT RenderBlackFrame() override;
     virtual HRESULT RenderLastFrame() override;
-    virtual HRESULT RenderLastFramePresentation(IDirect3DSurface9**) override;
+    virtual HRESULT RenderLastFramePresentation(void*) override;
     virtual BOOL GetDxva2Settings(DXVAHD_FILTER_RANGE_DATA_EX*, BOOL&) override;
     virtual HRESULT ResetDxva2Settings() override;
     virtual HRESULT SetFilter(const UINT, const INT) override;
-    virtual IDirect3DDeviceManager9* GetDeviceManager9() override;
+    virtual void* GetDevice() override;
     virtual const BOOL IsInitialized() const override;
 
 

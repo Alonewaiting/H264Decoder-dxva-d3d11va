@@ -35,10 +35,10 @@ public:
 	HRESULT RepaintVideo();
 	HRESULT OnFilter(const UINT, const INT);
 	HRESULT OnResetDxva2Settings();
-
+	HRESULT CreateDXDecoder(const BOOL&);
 	// Inline
 	const BOOL IsShutdown() const{ return m_bIsShutdown; }
-	BOOL GetDxva2Settings(DXVAHD_FILTER_RANGE_DATA_EX* pFilters, BOOL& bUseBT709){ return m_cDxva2Renderer.GetDxva2Settings(pFilters, bUseBT709); }
+	BOOL GetDxva2Settings(DXVAHD_FILTER_RANGE_DATA_EX* pFilters, BOOL& bUseBT709){ return m_cDXRenderer->GetDxva2Settings(pFilters, bUseBT709); }
 
 private:
 
@@ -47,9 +47,10 @@ private:
 	CriticSection m_CriticSectionDecoding;
 	CH264AtomParser m_cH264AtomParser;
 	CH264NaluParser m_cH264NaluParser;
-	CDxva2Decoder m_cDxva2Decoder;
-	std::shared_ptr<CD3D11vaDecoder> m_cD3D11Decoder;
-	D3D11Renderer m_cDxva2Renderer;
+
+	std::shared_ptr<DXDecoder> m_cDXDecoder;
+	std::shared_ptr<CDXRenderer> m_cDXRenderer;
+
 	IMFAsyncCallback* m_pWindowCallback;
 	CMFBuffer m_pVideoBuffer;
 	CMFBuffer m_pNalUnitBuffer;

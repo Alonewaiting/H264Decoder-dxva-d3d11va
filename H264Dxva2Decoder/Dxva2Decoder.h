@@ -23,21 +23,23 @@ public:
 	CDxva2Decoder();
 	~CDxva2Decoder(){ OnRelease(); }
 
-	HRESULT InitVideoDecoder(IDirect3DDeviceManager9*, const DXVA2_VideoDesc*, const SPS_DATA&);
-	void OnRelease();
-	void Reset();
-	HRESULT DecodeFrame(CMFBuffer&, const PICTURE_INFO&, const LONGLONG&, const int);
-	BOOL CheckFrame(SAMPLE_PRESENTATION&);
-	HRESULT AddSliceShortInfo(const int, const DWORD, const BOOL);
-	void FreeSurfaceIndexRenderer(const DWORD);
+	HRESULT InitVideoDecoder(void*, const DXVA2_VideoDesc*, const SPS_DATA&) override;
+	void OnRelease() override;
+	void Reset() override;
+	HRESULT DecodeFrame(CMFBuffer&, const PICTURE_INFO&, const LONGLONG&, const int) override;
+	BOOL CheckFrame(SAMPLE_PRESENTATION&) override;
+	HRESULT AddSliceShortInfo(const int, const DWORD, const BOOL) override;
+	void FreeSurfaceIndexRenderer(const DWORD) override;
 
 	// Inline
-	void ClearPresentation(){ m_dqPicturePresentation.clear(); memset(g_Dxva2SurfaceIndexV2, 0, sizeof(g_Dxva2SurfaceIndexV2)); }
-	DWORD PictureToDisplayCount() const{ return (DWORD)m_dqPicturePresentation.size(); }
-	void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc){ m_eNalUnitType = eNalUnitType; m_btNalRefIdc = btNalRefIdc; }
-	IDirect3DSurface9** GetDirect3DSurface9(){ return m_pSurface9; }
-	const BOOL IsInitialized() const{ return m_pVideoDecoder != NULL; }
-	ID3D11Texture2D* GetD3D11Texture() override { return nullptr; }
+	void ClearPresentation() override{ m_dqPicturePresentation.clear(); memset(g_Dxva2SurfaceIndexV2, 0, sizeof(g_Dxva2SurfaceIndexV2)); }
+	DWORD PictureToDisplayCount() const override{ return (DWORD)m_dqPicturePresentation.size(); }
+	void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc) override{ m_eNalUnitType = eNalUnitType; m_btNalRefIdc = btNalRefIdc; }
+	//IDirect3DSurface9** GetDirect3DSurface9(){ return m_pSurface9; }
+	//ID3D11Texture2D* GetD3D11Texture() override { return nullptr; }
+	const BOOL IsInitialized() const override{ return m_pVideoDecoder != NULL; }
+	
+	void* GetSurface()override { return m_pSurface9; }
 private:
 
 	// Dxva2

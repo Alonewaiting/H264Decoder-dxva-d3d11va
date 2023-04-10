@@ -12,7 +12,7 @@ public:
 	CD3D11vaDecoder();
 	virtual ~CD3D11vaDecoder();
 
-	virtual HRESULT InitVideoDecoder(IDirect3DDeviceManager9*, const DXVA2_VideoDesc*, const SPS_DATA&) override;
+	virtual HRESULT InitVideoDecoder(void*, const DXVA2_VideoDesc*, const SPS_DATA&) override;
 	virtual void OnRelease() override;
 	virtual void Reset() override;
 	virtual HRESULT DecodeFrame(CMFBuffer&, const PICTURE_INFO&, const LONGLONG&, const int) override;
@@ -24,9 +24,10 @@ public:
 	virtual void ClearPresentation() override;
 	virtual DWORD PictureToDisplayCount() const override;
 	virtual void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc) override;
-	virtual IDirect3DSurface9** GetDirect3DSurface9() override;
+	//virtual IDirect3DSurface9** GetDirect3DSurface9() override;
+	//ID3D11Texture2D* GetD3D11Texture() override { return m_texturePool.Get(); }
 	virtual const BOOL IsInitialized() const override;
-	ID3D11Texture2D* GetD3D11Texture() override { return m_texturePool.Get(); }
+	void* GetSurface()override { return m_texturePool.Get(); }
 private:
 	HRESULT initDevice();
 	HRESULT initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc);
