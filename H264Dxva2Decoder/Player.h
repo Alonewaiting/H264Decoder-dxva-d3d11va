@@ -4,6 +4,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <memory>
+#include "D3D11Renderer.h"
 class CD3D11vaDecoder;
 class CPlayer : public IMFAsyncCallback{
 
@@ -48,7 +49,7 @@ private:
 	CH264NaluParser m_cH264NaluParser;
 	CDxva2Decoder m_cDxva2Decoder;
 	std::shared_ptr<CD3D11vaDecoder> m_cD3D11Decoder;
-	CDxva2Renderer m_cDxva2Renderer;
+	D3D11Renderer m_cDxva2Renderer;
 	IMFAsyncCallback* m_pWindowCallback;
 	CMFBuffer m_pVideoBuffer;
 	CMFBuffer m_pNalUnitBuffer;

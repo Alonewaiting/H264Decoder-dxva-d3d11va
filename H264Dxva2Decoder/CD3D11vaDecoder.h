@@ -26,7 +26,7 @@ public:
 	virtual void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc) override;
 	virtual IDirect3DSurface9** GetDirect3DSurface9() override;
 	virtual const BOOL IsInitialized() const override;
-
+	ID3D11Texture2D* GetD3D11Texture() override { return m_texturePool.Get(); }
 private:
 	HRESULT initDevice();
 	HRESULT initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc);

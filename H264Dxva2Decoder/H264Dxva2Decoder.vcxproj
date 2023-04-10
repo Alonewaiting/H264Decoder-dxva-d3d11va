@@ -22,6 +22,7 @@
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="CallbackMessage.h" />
     <ClInclude Include="CD3D11vaDecoder.h" />
+    <ClInclude Include="CDXRenderer.h" />
     <ClInclude Include="Common\MFBuffer.h" />
     <ClInclude Include="Common\MFCriticSection.h" />
     <ClInclude Include="Common\MFLightBuffer.h" />
@@ -30,6 +31,11 @@
     <ClInclude Include="Common\MFReadParam.h" />
     <ClInclude Include="Common\MFTExternTrace.h" />
     <ClInclude Include="Common\MFTrace.h" />
+    <ClInclude Include="D3D11RenderData.h" />
+    <ClInclude Include="D3D11RenderDef.h" />
+    <ClInclude Include="D3D11RenderEnum.h" />
+    <ClInclude Include="D3D11Renderer.h" />
+    <ClInclude Include="D3D11RenderUtils.h" />
     <ClInclude Include="DXDecoder.h" />
     <ClInclude Include="Dxva2Decoder.h" />
     <ClInclude Include="Dxva2Definition.h" />
@@ -45,11 +51,15 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Text2D.h" />
+    <ClInclude Include="texture2dSample_PS.h" />
+    <ClInclude Include="texture2dSample_VS.h" />
     <ClInclude Include="WindowsForm.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitStream.cpp" />
     <ClCompile Include="CD3D11vaDecoder.cpp" />
+    <ClCompile Include="D3D11Renderer.cpp" />
+    <ClCompile Include="D3D11RenderUtils.cpp" />
     <ClCompile Include="Dxva2Decoder.cpp" />
     <ClCompile Include="Dxva2Renderer.cpp" />
     <ClCompile Include="Dxva2WindowsForm.cpp" />
@@ -73,6 +83,17 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="app.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="texture2dSample.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_Main</EntryPointName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_PS%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename)_PS.h</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -581,8 +581,8 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     HRESULT hr = S_OK;
     D3D11_TEXTURE2D_DESC texDesc ={};
     m_videoDesc = *pDxva2Desc;
-    texDesc.Width = D3DALIGN(pDxva2Desc->SampleWidth,16);
-    texDesc.Height = D3DALIGN(pDxva2Desc->SampleHeight,16);
+    texDesc.Width = pDxva2Desc->SampleWidth;
+    texDesc.Height = pDxva2Desc->SampleHeight;
     texDesc.MipLevels = 1;
     texDesc.Format = DXGI_FORMAT_NV12;
     texDesc.SampleDesc.Count = 1;
@@ -613,8 +613,8 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     D3D11_VIDEO_DECODER_DESC decoderDesc;
     ZeroMemory(&decoderDesc, sizeof(decoderDesc));
     decoderDesc.Guid = m_guid;
-    decoderDesc.SampleWidth = D3DALIGN(pDxva2Desc->SampleWidth, 16);
-    decoderDesc.SampleHeight = D3DALIGN(pDxva2Desc->SampleHeight, 16);
+    decoderDesc.SampleWidth = pDxva2Desc->SampleWidth;
+    decoderDesc.SampleHeight = pDxva2Desc->SampleHeight;
     decoderDesc.OutputFormat = DXGI_FORMAT_NV12;
     UINT cfg_count;
 
@@ -664,5 +664,5 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
        
         return hr;
     }
-
+    return hr;
 }

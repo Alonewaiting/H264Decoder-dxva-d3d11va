@@ -3,30 +3,30 @@
 //----------------------------------------------------------------------------------------------
 #ifndef DXVA2RENDERER_H
 #define DXVA2RENDERER_H
-
-class CDxva2Renderer{
+#include "CDXRenderer.h"
+class CDxva2Renderer : public CDXRenderer{
 
 public:
 
 	CDxva2Renderer();
-	~CDxva2Renderer(){ OnRelease(); }
+	~CDxva2Renderer() { OnRelease(); }
 
 	// Dxva2Renderer.cpp
-	HRESULT InitDXVA2(const HWND, const UINT, const UINT, const UINT, const UINT, DXVA2_VideoDesc&, const MFTIME);
-	void OnRelease();
-	void Reset();
-	HRESULT RenderFrame(IDirect3DSurface9**, const SAMPLE_PRESENTATION&);
-	HRESULT RenderBlackFrame();
-	HRESULT RenderLastFrame();
-	HRESULT RenderLastFramePresentation(IDirect3DSurface9**);
-	BOOL GetDxva2Settings(DXVAHD_FILTER_RANGE_DATA_EX*, BOOL&);
-	HRESULT ResetDxva2Settings();
-	HRESULT SetFilter(const UINT, const INT);
+	HRESULT InitDXVA2(const HWND, const UINT, const UINT, const UINT, const UINT, DXVA2_VideoDesc&, const MFTIME) override;
+	void OnRelease()override;
+	void Reset()override;
+	HRESULT RenderFrame(IDirect3DSurface9**, const SAMPLE_PRESENTATION&)override;
+	HRESULT RenderBlackFrame()override;
+	HRESULT RenderLastFrame()override;
+	HRESULT RenderLastFramePresentation(IDirect3DSurface9**)override;
+	BOOL GetDxva2Settings(DXVAHD_FILTER_RANGE_DATA_EX*, BOOL&)override;
+	HRESULT ResetDxva2Settings()override;
+	HRESULT SetFilter(const UINT, const INT)override;
 
 	// Inline
-	IDirect3DDeviceManager9* GetDeviceManager9(){ return m_pDirect3DDeviceManager9; }
-	const BOOL IsInitialized() const{ return m_pDXVAVP != NULL; }
-
+	IDirect3DDeviceManager9* GetDeviceManager9()override { return m_pDirect3DDeviceManager9; }
+	const BOOL IsInitialized() const override { return m_pDXVAVP != NULL; }
+	HRESULT RenderFrame(ID3D11Texture2D*, const SAMPLE_PRESENTATION&) override {return S_OK;}
 private:
 
 	// DirectX9Ex

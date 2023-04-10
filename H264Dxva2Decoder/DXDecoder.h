@@ -4,6 +4,7 @@
 #ifndef DXDecoder_H
 #define DXDecoder_H
 #include "StdAfx.h"
+class ID3D11Texture2D;
 class DXDecoder{
 
 public:
@@ -23,6 +24,7 @@ public:
 	virtual DWORD PictureToDisplayCount() const =0;
 	virtual void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc) = 0;
 	virtual IDirect3DSurface9** GetDirect3DSurface9() = 0;
+	virtual ID3D11Texture2D* GetD3D11Texture() = 0;
 	virtual const BOOL IsInitialized() const = 0;
 
 };

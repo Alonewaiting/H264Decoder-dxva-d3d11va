@@ -37,7 +37,7 @@ public:
 	void SetCurrentNalu(const NAL_UNIT_TYPE eNalUnitType, const BYTE btNalRefIdc){ m_eNalUnitType = eNalUnitType; m_btNalRefIdc = btNalRefIdc; }
 	IDirect3DSurface9** GetDirect3DSurface9(){ return m_pSurface9; }
 	const BOOL IsInitialized() const{ return m_pVideoDecoder != NULL; }
-
+	ID3D11Texture2D* GetD3D11Texture() override { return nullptr; }
 private:
 
 	// Dxva2

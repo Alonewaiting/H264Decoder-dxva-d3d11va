@@ -197,7 +197,7 @@ HRESULT CPlayer::OpenFile(const HWND hWnd, LPCWSTR lpwszFile){
 	DXVA2_Frequency Dxva2Freq;
 	IF_FAILED_RETURN(m_cH264AtomParser.GetVideoFrameRate(m_dwTrackId, &Dxva2Freq.Numerator, &Dxva2Freq.Denominator));
 	IF_FAILED_RETURN(m_cDxva2Renderer.InitDXVA2(hWnd, m_cH264NaluParser.GetWidth(), m_cH264NaluParser.GetHeight(), Dxva2Freq.Numerator, Dxva2Freq.Denominator, Dxva2Desc, llMovieDuration));
-	IF_FAILED_RETURN(m_cDxva2Decoder.InitVideoDecoder(m_cDxva2Renderer.GetDeviceManager9(), &Dxva2Desc, m_cH264NaluParser.GetSPS()));
+	//IF_FAILED_RETURN(m_cDxva2Decoder.InitVideoDecoder(m_cDxva2Renderer.GetDeviceManager9(), &Dxva2Desc, m_cH264NaluParser.GetSPS()));
 	IF_FAILED_RETURN(m_cD3D11Decoder->InitVideoDecoder(m_cDxva2Renderer.GetDeviceManager9(), &Dxva2Desc, m_cH264NaluParser.GetSPS()));
 
 	UINT64 AvgTimePerFrame;
@@ -213,8 +213,8 @@ HRESULT CPlayer::Play(){
 	HRESULT hr;
 
 	IF_FAILED_RETURN(IsShutdown() ? MF_E_SHUTDOWN : S_OK);
-	IF_FAILED_RETURN(m_cDxva2Decoder.IsInitialized() && m_cDxva2Renderer.IsInitialized() ? S_OK : MF_E_NOT_INITIALIZED);
-	IF_FAILED_RETURN(m_cD3D11Decoder->IsInitialized() && m_cD3D11Decoder->IsInitialized() ? S_OK : MF_E_NOT_INITIALIZED);
+	//IF_FAILED_RETURN(m_cDxva2Decoder.IsInitialized() && m_cDxva2Renderer.IsInitialized() ? S_OK : MF_E_NOT_INITIALIZED);
+	IF_FAILED_RETURN(m_cD3D11Decoder->IsInitialized() && m_cDxva2Renderer.IsInitialized() ? S_OK : MF_E_NOT_INITIALIZED);
 	// movie playing
 	if(m_hEventEndRendering != NULL){
 
@@ -272,7 +272,7 @@ HRESULT CPlayer::Stop(){
 	StopEvent();
 
 	m_cH264AtomParser.Reset();
-	m_cDxva2Decoder.Reset();
+	//m_cDxva2Decoder.Reset();
 	m_cDxva2Renderer.Reset();
 	m_cD3D11Decoder->Reset();
 	SendMessageToWindow(WND_MSG_STOPPING);
@@ -323,7 +323,7 @@ HRESULT CPlayer::Close(){
 
 	m_cH264AtomParser.Delete();
 	m_cH264NaluParser.Reset();
-	m_cDxva2Decoder.OnRelease();
+	//m_cDxva2Decoder.OnRelease();
 	m_cD3D11Decoder->OnRelease();
 	m_cDxva2Renderer.OnRelease();
 	m_bSeek = FALSE;
@@ -380,7 +380,7 @@ HRESULT CPlayer::SeekVideo(const MFTIME llDuration){
 	AutoLock lockDecoding(m_CriticSectionDecoding);
 	AutoLock lock(m_CriticSection);
 
-	m_cDxva2Decoder.ClearPresentation();
+	//m_cDxva2Decoder.ClearPresentation();
 	m_cD3D11Decoder->ClearPresentation();
 	m_dqPresentation.clear();
 
@@ -411,7 +411,7 @@ HRESULT CPlayer::OnFilter(const UINT uiFilter, const INT iValue){
 	IF_FAILED_RETURN(m_cDxva2Renderer.SetFilter(uiFilter, iValue));
 
 	if(m_bPause || m_bStep){
-		IF_FAILED_RETURN(m_cDxva2Renderer.RenderLastFramePresentation(m_cDxva2Decoder.GetDirect3DSurface9()));
+		//IF_FAILED_RETURN(m_cDxva2Renderer.RenderLastFramePresentation(m_cDxva2Decoder.GetDirect3DSurface9()));
 		IF_FAILED_RETURN(m_cDxva2Renderer.RenderLastFramePresentation(m_cD3D11Decoder->GetDirect3DSurface9()));
 	}
 
@@ -512,7 +512,7 @@ HRESULT CPlayer::ProcessDecoding(){
 				iSubSliceCount++;
 
 				if(iSubSliceCount == 1){
-                    m_cDxva2Decoder.SetCurrentNalu(m_cH264NaluParser.GetPicture().NalUnitType, m_cH264NaluParser.GetPicture().btNalRefIdc);
+                    //m_cDxva2Decoder.SetCurrentNalu(m_cH264NaluParser.GetPicture().NalUnitType, m_cH264NaluParser.GetPicture().btNalRefIdc);
                     m_cD3D11Decoder->SetCurrentNalu(m_cH264NaluParser.GetPicture().NalUnitType, m_cH264NaluParser.GetPicture().btNalRefIdc);
                    
 				}
@@ -525,16 +525,16 @@ HRESULT CPlayer::ProcessDecoding(){
 					dwParsed += 1;
 				}
 
-				IF_FAILED_THROW(m_cDxva2Decoder.AddSliceShortInfo(iSubSliceCount, dwParsed, m_iNaluLenghtSize == 4));
+				//IF_FAILED_THROW(m_cDxva2Decoder.AddSliceShortInfo(iSubSliceCount, dwParsed, m_iNaluLenghtSize == 4));
 				IF_FAILED_THROW(m_cD3D11Decoder->AddSliceShortInfo(iSubSliceCount, dwParsed, m_iNaluLenghtSize == 4));
 				if(m_pVideoBuffer.GetBufferSize() == 0){
 
 					m_pNalUnitBuffer.SetStartPositionAtBeginning();
-					IF_FAILED_THROW(m_cDxva2Decoder.DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
+					//IF_FAILED_THROW(m_cDxva2Decoder.DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 					IF_FAILED_THROW(m_cD3D11Decoder->DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 					SAMPLE_PRESENTATION SamplePresentation = {0};
-					m_cD3D11Decoder->CheckFrame(SamplePresentation);
-					if(m_cDxva2Decoder.CheckFrame(SamplePresentation)){
+					
+					if(m_cD3D11Decoder->CheckFrame(SamplePresentation)/*m_cDxva2Decoder.CheckFrame(SamplePresentation)*/) {
 
 						AutoLock lock(m_CriticSection);
 						m_dqPresentation.push_front(SamplePresentation);
@@ -553,12 +553,11 @@ HRESULT CPlayer::ProcessDecoding(){
 					// Can be NAL_UNIT_FILLER_DATA after sub-slices
 					m_pNalUnitBuffer.SetStartPositionAtBeginning();
 
-					IF_FAILED_THROW(m_cDxva2Decoder.DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
+					//IF_FAILED_THROW(m_cDxva2Decoder.DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 					IF_FAILED_THROW(m_cD3D11Decoder->DecodeFrame(m_pNalUnitBuffer, m_cH264NaluParser.GetPicture(), llTime, iSubSliceCount));
 
 					SAMPLE_PRESENTATION SamplePresentation = {0};
-					m_cD3D11Decoder->CheckFrame(SamplePresentation);
-					if(m_cDxva2Decoder.CheckFrame(SamplePresentation) ){
+					if(m_cD3D11Decoder->CheckFrame(SamplePresentation)/*m_cDxva2Decoder.CheckFrame(SamplePresentation)*/){
 
 						AutoLock lock(m_CriticSection);
 						m_dqPresentation.push_front(SamplePresentation);
@@ -576,7 +575,7 @@ HRESULT CPlayer::ProcessDecoding(){
 			if(hr == S_FALSE){
 
 				// S_FALSE means slice is corrupted. Just clear previous frames presentation, sometimes it's ok to continue
-				m_cDxva2Decoder.ClearPresentation();
+				//m_cDxva2Decoder.ClearPresentation();
 				m_cD3D11Decoder->ClearPresentation();
 				hr = S_OK;
 			}
@@ -673,8 +672,8 @@ HRESULT CPlayer::ProcessRendering(){
 					if(llDelta < -m_llPerFrame_1_4th){
 
 						// Frame too late
-						IF_FAILED_THROW(m_cDxva2Renderer.RenderFrame(m_cDxva2Decoder.GetDirect3DSurface9(), it));
-						m_cDxva2Decoder.FreeSurfaceIndexRenderer(it.dwDXVA2Index);
+						IF_FAILED_THROW(m_cDxva2Renderer.RenderFrame(m_cD3D11Decoder->GetD3D11Texture(), it));
+						//m_cDxva2Decoder.FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_cD3D11Decoder->FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_dqPresentation.pop_back();
 
@@ -695,8 +694,8 @@ HRESULT CPlayer::ProcessRendering(){
 					else{
 
 						// Time to render frame
-						IF_FAILED_THROW(m_cDxva2Renderer.RenderFrame(m_cDxva2Decoder.GetDirect3DSurface9(), it));
-						m_cDxva2Decoder.FreeSurfaceIndexRenderer(it.dwDXVA2Index);
+						IF_FAILED_THROW(m_cDxva2Renderer.RenderFrame(m_cD3D11Decoder->GetD3D11Texture(), it));
+						//m_cDxva2Decoder.FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_cD3D11Decoder->FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_dqPresentation.pop_back();
 
