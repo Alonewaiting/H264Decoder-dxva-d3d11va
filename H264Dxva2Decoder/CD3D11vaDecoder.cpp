@@ -105,7 +105,36 @@ HRESULT CD3D11vaDecoder::DecodeFrame(CMFBuffer& cMFNaluBuffer, const PICTURE_INF
 
     try {
         do {
-
+            if( m_outputView[dwCurPictureId] == nullptr){
+                Microsoft::WRL::ComPtr<ID3D11Texture2D> temp;
+                D3D11_TEXTURE2D_DESC texDesc = {};
+                texDesc.Width = m_videoDesc.SampleWidth;
+                texDesc.Height = m_videoDesc.SampleHeight;
+                texDesc.MipLevels = 1;
+                texDesc.Format = DXGI_FORMAT_NV12;
+                texDesc.SampleDesc.Count = 1;
+                texDesc.MiscFlags = 0;
+                texDesc.ArraySize = 1;
+                texDesc.Usage = D3D11_USAGE_DEFAULT;
+                texDesc.BindFlags = D3D11_BIND_DECODER;
+                texDesc.CPUAccessFlags = 0;
+                m_d3d11Device->CreateTexture2D(&texDesc, nullptr, temp.ReleaseAndGetAddressOf());
+                m_texturePool2.push_back(temp);
+                if (!temp) {
+                    return E_NOTIMPL;
+                }
+                m_guid = DXVA2_ModeH264_E;
+                D3D11_VIDEO_DECODER_OUTPUT_VIEW_DESC viewDesc;
+                ZeroMemory(&viewDesc, sizeof(viewDesc));
+                viewDesc.DecodeProfile = m_guid;
+                viewDesc.ViewDimension = D3D11_VDOV_DIMENSION_TEXTURE2D;
+                m_outputView.resize(MAX_SURFACE_SIZE);
+                viewDesc.Texture2D.ArraySlice = 0;
+                hr = m_videoDevice->CreateVideoDecoderOutputView((ID3D11Resource*)temp.Get(), &viewDesc, m_outputView[dwCurPictureId].ReleaseAndGetAddressOf());
+                if (FAILED(hr)) {
+                    return hr;
+                }
+            }
             hr = m_videoContext->DecoderBeginFrame(m_videoDecode.Get(),m_outputView[dwCurPictureId].Get(), 0,NULL);
             Sleep(1);
         } while (hr == E_PENDING);
@@ -155,16 +184,16 @@ HRESULT CD3D11vaDecoder::DecodeFrame(CMFBuffer& cMFNaluBuffer, const PICTURE_INF
         m_BufferDesc[3].DataSize = iSubSliceCount * sizeof(DXVA_Slice_H264_Short);
         m_BufferDesc[3].NumMBsInBuffer = m_BufferDesc[2].NumMBsInBuffer;
         m_BufferDesc[3].BufferType = D3D11_VIDEO_DECODER_BUFFER_SLICE_CONTROL;
-
-        IF_FAILED_THROW(m_videoContext->SubmitDecoderBuffers(m_videoDecode.Get(),4,m_BufferDesc));
-
-        IF_FAILED_THROW(m_videoContext->DecoderEndFrame(m_videoDecode.Get()));
+        auto hr = m_videoContext->SubmitDecoderBuffers(m_videoDecode.Get(), 4, m_BufferDesc);
+        //IF_FAILED_THROW(m_videoContext->SubmitDecoderBuffers(m_videoDecode.Get(),4,m_BufferDesc));
+        hr = m_videoContext->DecoderEndFrame(m_videoDecode.Get());
+        //IF_FAILED_THROW(m_videoContext->DecoderEndFrame(m_videoDecode.Get()));
     }
     catch (HRESULT) {
         
     }
     //save NV12 Data
-    if (true) {
+    if (false) {
         Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
         D3D11_TEXTURE2D_DESC desc2;
         m_texturePool->GetDesc(&desc2);
@@ -573,6 +602,9 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     if (!m_d3d11Device) {
         return E_NOTIMPL;
     }
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> temp;
+    m_texturePool2.reserve(MAX_SURFACE_SIZE);
+    m_outputView.resize(MAX_SURFACE_SIZE);
     HRESULT hr = S_OK;
     D3D11_TEXTURE2D_DESC texDesc ={};
     m_videoDesc = *pDxva2Desc;
@@ -582,13 +614,13 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     texDesc.Format = DXGI_FORMAT_NV12;
     texDesc.SampleDesc.Count = 1;
     texDesc.MiscFlags = 0;
-    texDesc.ArraySize = MAX_SURFACE_SIZE;
+    texDesc.ArraySize = 1;
     texDesc.Usage = D3D11_USAGE_DEFAULT;
     texDesc.BindFlags = D3D11_BIND_DECODER;
     texDesc.CPUAccessFlags = 0;
-    m_d3d11Device->CreateTexture2D(&texDesc,nullptr,m_texturePool.ReleaseAndGetAddressOf());
-    
-    if (!m_texturePool) {
+    m_d3d11Device->CreateTexture2D(&texDesc,nullptr, temp.ReleaseAndGetAddressOf());
+    m_texturePool2.push_back(temp);
+    if (!temp) {
         return E_NOTIMPL;
     }
     m_guid = DXVA2_ModeH264_E;
@@ -597,13 +629,13 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
     viewDesc.DecodeProfile = m_guid;
     viewDesc.ViewDimension = D3D11_VDOV_DIMENSION_TEXTURE2D;
     m_outputView.resize(MAX_SURFACE_SIZE);
-    for (int i = 0; i < MAX_SURFACE_SIZE; ++i) {
-        viewDesc.Texture2D.ArraySlice = i;
-        hr = m_videoDevice->CreateVideoDecoderOutputView((ID3D11Resource*)m_texturePool.Get(),&viewDesc,m_outputView[i].ReleaseAndGetAddressOf());
-        if (FAILED(hr)) {
-            return hr;
-        }
+
+    viewDesc.Texture2D.ArraySlice = 0;
+    hr = m_videoDevice->CreateVideoDecoderOutputView((ID3D11Resource*)temp.Get(),&viewDesc,m_outputView[0].ReleaseAndGetAddressOf());
+    if (FAILED(hr)) {
+        return hr;
     }
+ 
 
     D3D11_VIDEO_DECODER_DESC decoderDesc;
     ZeroMemory(&decoderDesc, sizeof(decoderDesc));
@@ -618,7 +650,7 @@ HRESULT CD3D11vaDecoder::initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc)
         return hr;
     }
     /* List all configurations available for the decoder */
-    D3D11_VIDEO_DECODER_CONFIG cfg_list[MAX_SURFACE_SIZE];
+    D3D11_VIDEO_DECODER_CONFIG cfg_list[40];
     for (unsigned i = 0; i < cfg_count; i++) {
         hr = m_videoDevice->GetVideoDecoderConfig(&decoderDesc, i, &cfg_list[i]);
         if (FAILED(hr)) {

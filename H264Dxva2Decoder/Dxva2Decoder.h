@@ -39,7 +39,7 @@ public:
 	//ID3D11Texture2D* GetD3D11Texture() override { return nullptr; }
 	const BOOL IsInitialized() const override{ return m_pVideoDecoder != NULL; }
 	
-	void* GetSurface()override { return m_pSurface9; }
+	void* GetSurface(const DWORD index = 0) override { return m_pSurface9; }
 private:
 
 	// Dxva2

@@ -277,7 +277,7 @@ HRESULT D3D11Renderer::RenderFrame(void* itexture, const SAMPLE_PRESENTATION& in
     Microsoft::WRL::ComPtr<ID3D11Texture2D> tempTexture;
     targetResource->QueryInterface(__uuidof(ID3D11Texture2D),(void**)tempTexture.ReleaseAndGetAddressOf());
     CHECK_COM_PTR(tempTexture);
-    context->CopySubresourceRegion(tempTexture.Get(),0,0,0,0,texture,info.dwDXVA2Index,nullptr);
+    context->CopySubresourceRegion(tempTexture.Get(),0,0,0,0,texture,0,nullptr);
     
     //render texture
     //create share resource view  SRV;

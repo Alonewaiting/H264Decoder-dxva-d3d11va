@@ -27,7 +27,7 @@ public:
 	//virtual IDirect3DSurface9** GetDirect3DSurface9() override;
 	//ID3D11Texture2D* GetD3D11Texture() override { return m_texturePool.Get(); }
 	virtual const BOOL IsInitialized() const override;
-	void* GetSurface()override { return m_texturePool.Get(); }
+	void* GetSurface(const DWORD index = 0)override { return m_texturePool2[index].Get(); }
 private:
 	HRESULT initDevice();
 	HRESULT initVideoDecoder(const DXVA2_VideoDesc* pDxva2Desc);
@@ -45,8 +45,10 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11VideoDevice>  m_videoDevice;
 	Microsoft::WRL::ComPtr <ID3D11VideoContext> m_videoContext;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texturePool;
+	
 	Microsoft::WRL::ComPtr < ID3D11VideoDecoder> m_videoDecode;
 	std::vector<Microsoft::WRL::ComPtr<ID3D11VideoDecoderOutputView>> m_outputView;
+	std::vector<Microsoft::WRL::ComPtr<ID3D11Texture2D>> m_texturePool2;
 	std::map<int, bool> m_textureState;
 	GUID m_guid;
 	NAL_UNIT_TYPE m_eNalUnitType;

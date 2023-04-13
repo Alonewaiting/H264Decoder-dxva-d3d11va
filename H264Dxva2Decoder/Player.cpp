@@ -676,7 +676,7 @@ HRESULT CPlayer::ProcessRendering(){
 					if(llDelta < -m_llPerFrame_1_4th){
 
 						// Frame too late
-						IF_FAILED_THROW(m_cDXRenderer->RenderFrame(m_cDXDecoder->GetSurface(), it));
+						IF_FAILED_THROW(m_cDXRenderer->RenderFrame(m_cDXDecoder->GetSurface(it.dwDXVA2Index), it));
 						m_cDXDecoder->FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_dqPresentation.pop_back();
 
@@ -697,7 +697,7 @@ HRESULT CPlayer::ProcessRendering(){
 					else{
 
 						// Time to render frame
-						IF_FAILED_THROW(m_cDXRenderer->RenderFrame(m_cDXDecoder->GetSurface(), it));
+						IF_FAILED_THROW(m_cDXRenderer->RenderFrame(m_cDXDecoder->GetSurface(it.dwDXVA2Index), it));
 						//m_cDxva2Decoder.FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_cDXDecoder->FreeSurfaceIndexRenderer(it.dwDXVA2Index);
 						m_dqPresentation.pop_back();
